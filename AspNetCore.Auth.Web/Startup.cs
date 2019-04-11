@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCore.Auth.Web.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,6 +27,9 @@ namespace AspNetCore.Auth.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            var users = new Dictionary<string, string> { { "Chris", "password" } };
+            services.AddSingleton<IUserService>(new DummyUserService(users));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
