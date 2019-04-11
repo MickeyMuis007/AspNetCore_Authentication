@@ -31,7 +31,7 @@ namespace AspNetCore.Auth.MVC.Controllers
         [Route("signin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SignIn(SignInModel model)
+        public async Task<IActionResult> SignIn(SignInModel model, string returnUrl = null)
         {
             if (ModelState.IsValid)
             {
@@ -39,10 +39,21 @@ namespace AspNetCore.Auth.MVC.Controllers
                 if (await _userService.ValidateCredentials(model.Username, model.Password, out user))
                 {
                     await SignInUser(user.Username);
+                    if (returnUrl != null)
+                    {
+                        return Redirect(returnUrl);
+                    }
                     return RedirectToAction("Index", "Home");
                 }
             }
             return View(model);
+        }
+
+        [Route("signout")]
+        public async Task<IActionResult> SignOut()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Index", "Home");
         }
 
         public async Task SignInUser(string username)
